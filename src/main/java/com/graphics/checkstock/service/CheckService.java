@@ -87,7 +87,7 @@ public class CheckService extends TimerTask {
 
     public static void sendEmail(String body) {
         String from = "gpusalert@gmail.com";
-        String[] to = {"2025053977@tmomail.net"};
+        String[] to = {"2025053977@vtext.com"};
         Properties props = System.getProperties();
         String host = "smtp.gmail.com";
         props.put("mail.smtp.starttls.enable", "true");
