@@ -18,30 +18,51 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.TimerTask;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CheckService extends TimerTask {
+public class CheckService {
 
-    @SneakyThrows
-    @Override
-    public void run() {
-        bestbuy();
-        evgaWeb();
+    private int i = 1;
+    Thread thread = new Thread(new Runnable() {
+        @SneakyThrows
+        public void run() {
+            while (i > 0) {
+                log.info("----------- " + i + " iteration -----------");
+                bestbuy(60000);
+                evgaWeb(60000);
+                Random rand = new Random();
+                int r = rand.nextInt(12);
+                log.info("----------- SLEEP FOR " + r + " SEC -----------");
+                TimeUnit.SECONDS.sleep(r);
+                i++;
+            }
+        }
+    });
+
+    public void start() {
+        thread.start();
     }
 
-    private void bestbuy() throws IOException {
+    public int getStat() {
+        return i;
+    }
+
+    private void bestbuy(int timeout) throws IOException {
         Document doc = Jsoup
                 .connect("https://www.bestbuy.com/site/searchpage.jsp?_dyncharset=UTF-8&id=pcat17071&iht=y&keys=keys&ks=960&list=n&qp=brand_facet%3DBrand~EVGA%5Ebrand_facet%3DBrand~MSI%5Ebrand_facet%3DBrand~NVIDIA%5Ecategory_facet%3Dname~abcat0507002%5Egpusv_facet%3DGraphics%20Processing%20Unit%20(GPU)~NVIDIA%20GeForce%20RTX%203080&sc=Global&st=rtx%203080&type=page&usc=All%20Categories")
                 .referrer("http://google.com")
                 .userAgent("Mozilla")
-                .timeout(5000)
+                .timeout(timeout)
                 .get();
 
         String evga = doc.select("button[data-sku-id=6436191]").first().toString();
         String nvidia = doc.select("button[data-sku-id=6429440]").first().toString();
+
+
 
         if (!evga.contains("Coming Soon")) {
             sendEmail("https://www.bestbuy.com/site/evga-geforce-rtx-3080-ftw3-gaming-10gb-gddr6x-pci-express-4-0-graphics-card/6436191.p?skuId=6436191");
@@ -55,13 +76,13 @@ public class CheckService extends TimerTask {
 
     }
 
-    private void evgaWeb() throws IOException {
+    private void evgaWeb(int timeout) throws IOException {
 
         Document doc = Jsoup
                 .connect("https://www.evga.com/products/ProductList.aspx?type=0&family=GeForce+30+Series+Family&chipset=RTX+3080")
                 .referrer("http://google.com")
                 .userAgent("Mozilla")
-                .timeout(5000)
+                .timeout(timeout)
                 .get();
 
         Elements evga = doc.select("div[class=pl-list-info]");
