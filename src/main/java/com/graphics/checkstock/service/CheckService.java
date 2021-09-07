@@ -59,13 +59,18 @@ public class CheckService {
                 .timeout(timeout)
                 .get();
 
-        String evga = doc.select("button[data-sku-id=6436191]").first().toString();
+        String evga = doc.select("button[data-sku-id=6432400]").first().toString();
+        String evga1 = doc.select("button[data-sku-id=6471615]").first().toString();
         String nvidia = doc.select("button[data-sku-id=6429440]").first().toString();
 
 
 
-        if (!evga.contains("Coming Soon")) {
-            sendEmail("https://www.bestbuy.com/site/evga-geforce-rtx-3080-ftw3-gaming-10gb-gddr6x-pci-express-4-0-graphics-card/6436191.p?skuId=6436191");
+        if (!evga.contains("Sold Out")) {
+            sendEmail("https://www.bestbuy.com/site/evga-geforce-rtx-3080-xc3-ultra-gaming-10gb-gddr6-pci-express-4-0-graphics-card/6432400.p?skuId=6432400");
+        }
+
+        if (!evga1.contains("Sold Out")) {
+            sendEmail("https://www.bestbuy.com/site/evga-rtx-3080-xc3-ultra-gaming-10g-p5-3885-kh-pci-express-4-0-lhr/6471615.p?skuId=6471615");
         }
 
         if (!nvidia.contains("Sold Out")) {
